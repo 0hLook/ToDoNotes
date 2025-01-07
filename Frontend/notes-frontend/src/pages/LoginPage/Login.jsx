@@ -1,0 +1,68 @@
+import React, { useState } from "react";
+import NavBar from "../../components/NavBar";
+import { Link } from "react-router-dom";
+import UserPasswordInput from "../../components/Inputs/UserPasswordInput";
+import { validateEmail } from "../../utils/Helper";
+
+const Login = () => {
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  const [loginError, setLoginError] = useState(null);
+
+  const loginHandler = async (e) => {
+    e.preventDefault();
+
+    if (!validateEmail(userEmail)) {
+        setLoginError("This email is invalid.");
+        return;
+    }
+
+    if (!userPassword) {
+        setLoginError("This password is invalid.");
+        return;
+    }
+
+    setLoginError("")
+  };
+
+  return (
+    <>
+      <NavBar />
+
+      <div className="flex items-center justify-center mt-28">
+        <div className="w-96 border rounded bg-white px-7 py-10">
+          <form onSubmit={loginHandler}>
+            <h4 className="text-2xl mb-7 font-bold text-center">Login</h4>
+            <input
+              type="text"
+              placeholder="Email"
+              className="input-box"
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
+            />
+
+            <UserPasswordInput 
+                value={userPassword}
+                onChange={(e) => setUserPassword(e.target.value)}
+            />
+
+            {loginError && <p className="text-red-500 font-bold text-xs pb-1">{loginError}</p>}
+
+            <button type="submit" className="btn-primary">
+              Login
+            </button>
+
+            <p className="text-sm text-centre mt-4">
+              Not registered yet?{" "}
+              <Link to="/signup" className="font-medium text-primary underline">
+                Create an Account
+              </Link>
+            </p>
+          </form>
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Login;
