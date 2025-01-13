@@ -10,7 +10,7 @@
     }
 
     body {
-        background-color:rgb(186, 166, 130);
+        background-color: #baa682;
         overflow-x: hidden;
     }
 }
@@ -22,6 +22,14 @@
 
     .btn-primary {
         @apply w-full text-sm bg-primary text-white p-2 rounded my-1 hover:bg-blue-600;
+    }
+
+    .icon-btn {
+        @apply text-xl text-slate-300 cursor-pointer hover:text-primary;
+    }
+
+    .input-label {
+        @apply text-xs text-slate-400;
     }
     
 }
