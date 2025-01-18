@@ -1,49 +1,63 @@
 import React, { useState } from "react";
 import NavBar from "../../components/NavBar";
 import UserPasswordInput from "../../components/Inputs/UserPasswordInput";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { validateEmail } from "../../other/Helper";
+import axiosInstance from "../../other/axiosInstance";
 
 const Signup = () => {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
+  const [username, setUsername] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  const [signUpError, setSignUpError] = useState(null);
 
-  const [errors, setErrors] = useState({});
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.username) {
-      newErrors.username = "Please enter your username.";
-    }
-
-    if (!validateEmail(formData.email)) {
-      newErrors.email = "Please enter a valid email address.";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Please enter a password.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const navigate = useNavigate();
 
   const signUpHandler = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    if (!username) {
+      setSignUpError("Please enter your username.");
+      return;
+    }
 
-    // For testing later
-    console.log("Form submitted:", formData);
+    if (!validateEmail(userEmail)) {
+      setSignUpError("Please enter a valid email address.");
+      return;
+    }
+
+    if (!userPassword) {
+      setSignUpError("Please enter a password");
+      return;
+    }
+
+    setSignUpError("")
+
+    try {
+      const response = await axiosInstance.post("/create-account", {
+        fullName: username,
+        email: userEmail,
+        password: userPassword,
+      });
+
+      if (response.data && response.data.error) {
+        setSignUpError(response.data.message)
+        return
+      }
+
+      if(response.data && response.data.accessToken) {
+        localStorage.setItem("token", response.data.accessToken)
+        navigate('/dashboard')
+      }
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setSignUpError(error.response.data.message);
+      } else {
+        setSignUpError("An unexpected error has occured.");
+      }
+    }
+
+
   };
 
   return (
@@ -55,54 +69,33 @@ const Signup = () => {
           <form onSubmit={signUpHandler}>
             <h4 className="text-2xl mb-7 font-bold text-center">Sign Up</h4>
 
-            {/* Username Input */}
             <input
               type="text"
-              name="username"
               placeholder="Name"
               className="input-box"
-              value={formData.username}
-              onChange={handleChange}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
-            {errors.username && (
-              <p className="text-red-500 font-bold text-xs pb-3 -mt-3.5">
-                {errors.username}
-              </p>
-            )}
 
-            {/* Email Input */}
             <input
               type="text"
-              name="email"
               placeholder="Email"
               className="input-box"
-              value={formData.email}
-              onChange={handleChange}
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
             />
-            {errors.email && (
-              <p className="text-red-500 font-bold text-xs pb-3 -mt-3.5">
-                {errors.email}
-              </p>
-            )}
 
-            {/* Password Input */}
             <UserPasswordInput
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
+              value={userPassword}
+              onChange={(e) => setUserPassword(e.target.value)}
             />
-            {errors.password && (
-              <p className="text-red-500 font-bold text-xs pb-3 -mt-2.5">
-                {errors.password}
-              </p>
-            )}
 
-            {/* Submit Button */}
+            {signUpError && <p className="text-red-500 font-bold text-xs pb-1">{signUpError}</p>} 
+
             <button type="submit" className="btn-primary">
               Create Account
             </button>
 
-            {/* Login Link */}
             <p className="text-sm text-center mt-4">
               Already have an account?{" "}
               <Link to="/login" className="font-medium text-primary underline">
