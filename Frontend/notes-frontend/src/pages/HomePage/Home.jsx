@@ -6,6 +6,8 @@ import ModifyNotes from "./ModifyNotes";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../other/axiosInstance";
+import Toast from "../../components/Toast";
+import EmptyCard from "../../components/EmptyCard";
 
 const Home = () => {
   const [openModifyNotes, setOpenModifyNotes] = useState({
@@ -14,12 +16,36 @@ const Home = () => {
     data: null,
   });
 
+  const [showToastMessage, setShowToastMessage] = useState({
+    isShown: false,
+    message: "",
+    type: "add",
+  });
+
   const [userInfo, setUserInfo] = useState(null);
   const [allNotes, setAllNotes] = useState([]);
+
+  const [isSearch, setIsSearch] = useState(false);
+
   const navigate = useNavigate();
 
   const handleEdit = (noteDetails) => {
     setOpenModifyNotes({ isShown: true, data: noteDetails, type: "edit" });
+  };
+
+  const showToastMessage2 = (message, type) => {
+    setShowToastMessage({
+      isShown: true,
+      message,
+      type,
+    });
+  };
+
+  const handleCloseToast = () => {
+    setShowToastMessage({
+      isShown: false,
+      message: ",",
+    });
   };
 
   const getUserInfo = async () => {
@@ -37,7 +63,6 @@ const Home = () => {
   };
 
   const getAllUserNotes = async () => {
-
     try {
       const response = await axiosInstance.get("/get-all-notes");
 
@@ -49,6 +74,67 @@ const Home = () => {
     }
   };
 
+  const deleteNote = async (data) => {
+    const noteId = data._id;
+
+    try {
+      const response = await axiosInstance.delete("/delete-note/" + noteId);
+
+      if (response.data && !response.data.error) {
+        showToastMessage2("Note Deleted Successfully", "delete");
+        getAllUserNotes();
+      }
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        console.log("An unexpected error has occured.");
+      }
+    }
+  };
+
+  const onSearchNote = async (query) => {
+    try {
+      const response = await axiosInstance.get("/search-notes", {
+        params: { query },
+      });
+
+      if (response.data && response.data.notes) {
+        setIsSearch(true);
+        setAllNotes(response.data.notes);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const updateIsPinned = async (noteData) => {
+    const noteId = noteData._id;
+    try {
+      const response = await axiosInstance.put(
+        "/update-note-pinned/" + noteId,
+        {
+          isPinned: !noteData.isPinned,
+        }
+      );
+
+      if (response.data && response.data.note) {
+        showToastMessage2("Note Updated Successfully");
+        getAllUserNotes();
+      }
+    } catch (error) {
+      console.log(error);
+
+    }
+  };
+
+  const handleClearSearch = () => {
+    setIsSearch(false);
+    getAllUserNotes();
+  };
+
   useEffect(() => {
     getAllUserNotes();
     getUserInfo();
@@ -57,24 +143,38 @@ const Home = () => {
 
   return (
     <>
-      <NavBar userInfo={userInfo} />
+      <NavBar
+        userInfo={userInfo}
+        onSearchNote={onSearchNote}
+        handleClearSearch={handleClearSearch}
+      />
 
       <div className="container mx-auto">
-        <div className="grid grid-cols-3 gap-4 mt-8">
-          {allNotes.map((item, index) => (
-          <NoteCard
-            key={item._id}
-            title={item.title}
-            date={item.createdOn}
-            content={item.content}
-            tags={item.tags}
-            isPinned={item.isPinned}
-            onEdit={() => handleEdit(item)}
-            onDelete={() => {}}
-            onPinNote={() => {}}
+        {allNotes.length > 0 ? (
+          <div className="grid grid-cols-3 gap-4 mt-8">
+            {allNotes.map((item, index) => (
+              <NoteCard
+                key={item._id}
+                title={item.title}
+                date={item.createdOn}
+                content={item.content}
+                tags={item.tags}
+                isPinned={item.isPinned}
+                onEdit={() => handleEdit(item)}
+                onDelete={() => deleteNote(item)}
+                onPinNote={() => updateIsPinned(item)}
+              />
+            ))}
+          </div>
+        ) : (
+          <EmptyCard
+            message={
+              isSearch
+                ? "No notes found to your search query."
+                : "Click the Add Icon on the bottom right to start adding your notes!"
+            }
           />
-          ))}
-        </div>
+        )}
       </div>
       <button
         className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute right-10 bottom-10"
@@ -103,8 +203,16 @@ const Home = () => {
             setOpenModifyNotes({ isShown: false, type: "add", data: null });
           }}
           getAllUserNotes={getAllUserNotes}
+          showToastMessage2={showToastMessage2}
         />
       </Modal>
+
+      <Toast
+        isShown={showToastMessage.isShown}
+        message={showToastMessage.message}
+        type={showToastMessage.type}
+        onClose={handleCloseToast}
+      />
     </>
   );
 };
