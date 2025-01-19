@@ -9,3 +9,7 @@ node_modules/
 
 # Ignore build output
 /dist/
+
+Frontend/notes-frontend/node_modules/
+Frontend/.env
+Backend/node_modules/
