@@ -1,44 +1,49 @@
 import React, { useState } from "react";
 import NavBar from "../../components/NavBar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import UserPasswordInput from "../../components/Inputs/UserPasswordInput";
 import { validateEmail } from "../../other/Helper";
+import axiosInstance from "../../other/axiosInstance";
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  const [loginError, setLoginError] = useState(null);
 
-  const [errors, setErrors] = useState({});
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!validateEmail(formData.email)) {
-      newErrors.email = "This email is invalid.";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "This password is invalid.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const navigate = useNavigate();
 
   const loginHandler = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    if (!validateEmail(userEmail)) {
+      setLoginError("This email is invalid.");
+      return;
+    }
 
-    // Proceed with login logic
-    console.log("Form submitted:", formData);
+    if (!userPassword) {
+      setLoginError("This password is invalid.");
+      return;
+    }
+
+    setLoginError("");
+
+    try {
+      const response = await axiosInstance.post("/login", {
+        email: userEmail,
+        password: userPassword,
+      });
+
+      if (response.data && response.data.accessToken) {
+        localStorage.setItem("token", response.data.accessToken);
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setLoginError(error.response.data.message);
+      } else {
+        setLoginError("An unexpected error has occured.");
+      }
+    }
   };
 
   return (
@@ -49,41 +54,30 @@ const Login = () => {
         <div className="w-96 border rounded bg-white px-7 py-10">
           <form onSubmit={loginHandler}>
             <h4 className="text-2xl mb-7 font-bold text-center">Login</h4>
-
-            {/* Email Input */}
             <input
               type="text"
-              name="email"
               placeholder="Email"
               className="input-box"
-              value={formData.email}
-              onChange={handleChange}
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
             />
-            {errors.email && (
-              <p className="text-red-500 font-bold text-xs pb-3 -mt-3.5">
-                {errors.email}
-              </p>
-            )}
 
-            {/* Password Input */}
             <UserPasswordInput
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
+              value={userPassword}
+              onChange={(e) => setUserPassword(e.target.value)}
             />
-            {errors.password && (
-              <p className="text-red-500 font-bold text-xs pb-3 -mt-2.5">
-                {errors.password}
+
+            {loginError && (
+              <p className="text-red-500 font-bold text-xs pb-1">
+                {loginError}
               </p>
             )}
 
-            {/* Submit Button */}
             <button type="submit" className="btn-primary">
               Login
             </button>
 
-            {/* Signup Link */}
-            <p className="text-sm text-center mt-4">
+            <p className="text-sm text-centre mt-4">
               Not registered yet?{" "}
               <Link to="/signup" className="font-medium text-primary underline">
                 Create an Account
