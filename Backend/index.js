@@ -17,7 +17,12 @@ const { authenticateToken } = require("./utilities");
 
 app.use(express.json());
 
-app.use(cors());
+const corsOrigin ={
+  origin:'http://localhost:5173', //or whatever port your frontend is using
+  credentials:true,            
+  optionSuccessStatus:200
+}
+app.use(cors(corsOrigin));
 
 app.get("/", (req, res) => {
   res.json({ data: "hello" });
