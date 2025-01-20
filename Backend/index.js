@@ -23,6 +23,13 @@ app.use(
   })
 );
 
+app.use(cors({
+  origin: "*",
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true, // If using credentials (cookies, auth tokens, etc.)
+}));
+
 app.get("/", (req, res) => {
   res.json({ data: "hello" });
 });
