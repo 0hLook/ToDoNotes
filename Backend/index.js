@@ -15,14 +15,14 @@ const app = express();
 const jwt = require("jsonwebtoken");
 const { authenticateToken } = require("./utilities");
 
-app.use(express.json());
-
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "*",
   methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: true,
 }));
+
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.json({ data: "hello" });
