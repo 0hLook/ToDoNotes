@@ -17,17 +17,11 @@ const { authenticateToken } = require("./utilities");
 
 app.use(express.json());
 
-app.use(
-  cors({
-    origin: "*",
-  })
-);
-
 app.use(cors({
-  origin: "*",
+  origin: "http://localhost:5173",
   methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  credentials: true, // If using credentials (cookies, auth tokens, etc.)
+  credentials: true,
 }));
 
 app.get("/", (req, res) => {
