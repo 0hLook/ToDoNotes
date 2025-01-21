@@ -17,13 +17,6 @@ const { authenticateToken } = require("./utilities");
 
 app.use(express.json());
 
-app.use(cors({
-  origin: "*",
-  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  credentials: true,
-}));
-
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true)
   // res.setHeader('Access-Control-Allow-Origin', '*')
@@ -47,6 +40,14 @@ const handler = (req, res) => {
 }
 
 module.exports = allowCors(handler)
+
+app.use(cors({
+  origin: "*",
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true,
+}));
+
 
 app.get("/", (req, res) => {
   res.json({ data: "hello" });
