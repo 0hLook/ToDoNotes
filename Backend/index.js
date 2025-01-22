@@ -15,12 +15,44 @@ const app = express();
 const jwt = require("jsonwebtoken");
 const { authenticateToken } = require("./utilities");
 
+const port = process.env.PORT || 8000;
+
 app.use(express.json());
 
-app.use(cors())
+const allowCors = fn => async (req, res) => {
+  res.setHeader('Access-Control-Allow-Credentials', true)
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  // another common pattern
+  //res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  )
+  if (req.method === 'OPTIONS') {
+    res.status(200).end()
+    return
+  }
+  return await fn(req, res)
+}
+
+const handler = (req, res) => {
+  const d = new Date()
+  res.end(d.toString())
+}
+
+module.exports = allowCors(handler)
+
+app.use(cors({
+  origin: "*",
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true,
+}));
+
 
 app.get("/", (req, res) => {
-  res.json({ data: "hello" });
+  res.json({ data: "hello1" });
 });
 
 // Account Creation
@@ -74,6 +106,11 @@ app.post("/create-account", async (req, res) => {
 
 // Account Login
 app.post("/login", async (req, res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization'); 
+
   const { email, password } = req.body;
 
   if (!email) {
@@ -114,6 +151,11 @@ app.post("/login", async (req, res) => {
 
 // Get User
 app.get("/get-user", authenticateToken, async (req, res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization'); 
+
   const { user } = req.user;
 
   const isUser = await User.findOne({ _id: user._id });
@@ -212,6 +254,11 @@ app.put("/edit-note/:noteId", authenticateToken, async (req, res) => {
 
 // Get All Notes
 app.get("/get-all-notes", authenticateToken, async (req, res) => {
+  
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization'); 
+
   const { user } = req.user;
 
   try {
@@ -319,6 +366,6 @@ app.get("/search-notes/", authenticateToken, async (req, res) => {
   }
 });
 
-app.listen(8000);
+app.listen(port);
 
 module.exports = app;
