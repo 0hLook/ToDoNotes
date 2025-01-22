@@ -15,6 +15,8 @@ const app = express();
 const jwt = require("jsonwebtoken");
 const { authenticateToken } = require("./utilities");
 
+const port = process.env.PORT || 8000;
+
 app.use(express.json());
 
 const allowCors = fn => async (req, res) => {
@@ -364,6 +366,6 @@ app.get("/search-notes/", authenticateToken, async (req, res) => {
   }
 });
 
-app.listen(8000);
+app.listen(port);
 
 module.exports = app;
