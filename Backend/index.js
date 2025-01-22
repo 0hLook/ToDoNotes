@@ -45,6 +45,9 @@ module.exports = allowCors(handler)
 
 app.use(cors({
   origin: "*",
+  methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true,
 }));
 
 
@@ -104,6 +107,10 @@ app.post("/create-account", async (req, res) => {
 // Account Login
 app.post("/login", async (req, res) => {
 
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization'); 
+
   const { email, password } = req.body;
 
   if (!email) {
@@ -144,6 +151,10 @@ app.post("/login", async (req, res) => {
 
 // Get User
 app.get("/get-user", authenticateToken, async (req, res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization'); 
 
   const { user } = req.user;
 
@@ -243,6 +254,10 @@ app.put("/edit-note/:noteId", authenticateToken, async (req, res) => {
 
 // Get All Notes
 app.get("/get-all-notes", authenticateToken, async (req, res) => {
+  
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization'); 
 
   const { user } = req.user;
 
