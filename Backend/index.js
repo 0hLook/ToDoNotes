@@ -19,12 +19,15 @@ const port = process.env.PORT || 8000;
 
 app.use(express.json());
 
-app.use(cors({
-  origin: "*",
-  //methods: ['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'],
-  //allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  //credentials: true,
-}));
+// Configure CORS
+const corsOptions = {
+  origin: '*', // Allow your frontend URL
+  methods: 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
+  allowedHeaders: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
+  credentials: true // Allow cookies if needed
+};
+
+app.use(cors(corsOptions));
 
 
 app.get("/", (req, res) => {
