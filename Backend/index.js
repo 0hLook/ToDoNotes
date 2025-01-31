@@ -26,9 +26,10 @@ const corsOptions = {
   allowedHeaders: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization',
 };
 
+app.options('*', cors(corsOptions)); // Handle preflight requests for all routes
+
 app.use(cors(corsOptions));
 
-app.options('*', cors(corsOptions)); // Handle preflight requests for all routes
 
 app.get("/", (req, res) => {
   res.json({ data: "hello1" });
