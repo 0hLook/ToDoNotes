@@ -21,7 +21,7 @@ app.use(express.json());
 
 // Configure CORS
 const corsOptions = {
-  origin: 'https://to-do-notes-frontend-2.vercel.app', // Allow your frontend URL
+  origin: ['https://to-do-notes-frontend-2.vercel.app'], // Allow both frontend URLs
   methods: 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
   allowedHeaders: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
   credentials: true // Allow cookies if needed
@@ -29,7 +29,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.options('https://to-do-notes-frontend-2.vercel.app', cors(corsOptions));
+app.options('*', cors(corsOptions)); // Handle preflight requests for all routes
 
 app.get("/", (req, res) => {
   res.json({ data: "hello1" });
