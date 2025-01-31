@@ -5,6 +5,9 @@ import { BASE_URL, BASE_URL2 } from "./constants";
 const axiosInstance = axios.create({
   baseURL: BASE_URL2,
   timeout: 20000,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 axiosInstance.interceptors.request.use(
