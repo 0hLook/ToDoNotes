@@ -21,7 +21,7 @@ app.use(express.json());
 
 // Configure CORS
 const corsOptions = {
-  origin: ['https://to-do-notes-frontend-2.vercel.app'],
+  origin: ['https://to-do-notes-frontend-2.vercel.app', 'http://localhost:5173'],
   methods: 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
   allowedHeaders: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization',
   credentials: true // Allow cookies if needed
