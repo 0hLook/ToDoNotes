@@ -3,7 +3,10 @@ require("dotenv").config();
 const config = require("./config.json");
 const mongoose = require("mongoose");
 
-mongoose.connect(config.connectionString);
+mongoose.connect(config.connectionString, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 const User = require("./models/user.model");
 const Note = require("./models/note.model");
@@ -19,6 +22,7 @@ const port = process.env.PORT || 8000;
 
 app.use(express.json());
 
+/*
 // Configure CORS
 const corsOptions = {
   origin: '*',
@@ -29,7 +33,21 @@ const corsOptions = {
 app.options('*', cors(corsOptions)); // Handle preflight requests for all routes
 
 app.use(cors(corsOptions));
+*/
 
+app.use(cors());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization,auth-token"
+  );
+  if (req.method === "OPTIONS") {
+    res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+    return res.status(200).json({});
+  }
+  next();
+});
 
 app.get("/", (req, res) => {
   res.json({ data: "hello1" });
