@@ -65,9 +65,9 @@ const Signup = () => {
       <LSheader/>
 
       <div className="flex items-center justify-center mt-28">
-        <div className="w-96 border rounded bg-white px-7 py-10">
+        <div className="w-96 border rounded bg-white dark:bg-gray-100 px-7 py-10">
           <form onSubmit={signUpHandler}>
-            <h4 className="text-2xl mb-7 font-bold text-center">Sign Up</h4>
+            <h4 className="text-2xl mb-7 font-bold text-center text-black dark:text-black">Sign Up</h4>
 
             <input
               type="text"
@@ -96,7 +96,7 @@ const Signup = () => {
               Create Account
             </button>
 
-            <p className="text-sm text-center mt-4">
+            <p className="text-sm text-center mt-4 text-black dark:text-black">
               Already have an account?{" "}
               <Link to="/" className="font-medium text-primary underline">
                 Login

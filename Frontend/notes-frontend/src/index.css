@@ -10,9 +10,9 @@
     }
 
     body {
-        background-color: #baa682;
+        @apply bg-[#54809a] text-black dark:bg-gray-900 dark:text-white;
         overflow-x: hidden;
-    }
+      }
 }
 
 @layer components {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../../components/NavBar";
 import NoteCard from "../../components/NoteCard";
-import { MdAdd } from "react-icons/md";
+import { MdAdd, MdGridOn, MdViewList } from "react-icons/md"; // Added icons for the toggle
 import ModifyNotes from "./ModifyNotes";
 import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
@@ -24,8 +24,8 @@ const Home = () => {
 
   const [userInfo, setUserInfo] = useState(null);
   const [allNotes, setAllNotes] = useState([]);
-
   const [isSearch, setIsSearch] = useState(false);
+  const [isGridLayout, setIsGridLayout] = useState(false); // State for layout toggle
 
   const navigate = useNavigate();
 
@@ -126,7 +126,6 @@ const Home = () => {
       }
     } catch (error) {
       console.log(error);
-
     }
   };
 
@@ -151,8 +150,12 @@ const Home = () => {
 
       <div className="container mx-auto">
         {allNotes.length > 0 ? (
-          <div className="grid grid-cols-3 gap-4 mt-8">
-            {allNotes.map((item, index) => (
+          <div
+            className={`${
+              isGridLayout ? "grid grid-cols-3 gap-4" : "flex flex-col gap-4"
+            } mt-8`}
+          >
+            {allNotes.map((item) => (
               <NoteCard
                 key={item._id}
                 title={item.title}
@@ -176,6 +179,7 @@ const Home = () => {
           />
         )}
       </div>
+
       <button
         className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute right-10 bottom-10"
         onClick={() => {
@@ -183,6 +187,17 @@ const Home = () => {
         }}
       >
         <MdAdd className="text-[32px] text-white" />
+      </button>
+
+      <button
+        onClick={() => setIsGridLayout(!isGridLayout)}
+        className="fixed bottom-10 left-10 w-16 h-16 rounded-2xl bg-primary hover:bg-blue-600 flex items-center justify-center"
+      >
+        {isGridLayout ? (
+          <MdViewList className="text-white" />
+        ) : (
+          <MdGridOn className="text-white" />
+        )}
       </button>
 
       <Modal

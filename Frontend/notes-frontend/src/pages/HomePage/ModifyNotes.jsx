@@ -80,7 +80,7 @@ const ModifyNotes = ({ onClose, noteData, getAllUserNotes, type, showToastMessag
   };
 
   return (
-    <div className="relative">
+    <div className="relative max-h-screen overflow-y-auto overflow-x-hidden">
       <button
         className="w-10 h-10 rounded-full flex items-center justify-center absolute -top-3 -right-3 hover:bg-slate-50"
         onClick={onClose}

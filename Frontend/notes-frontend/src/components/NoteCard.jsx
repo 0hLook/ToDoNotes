@@ -14,10 +14,10 @@ const NoteCard = ({
   onPinNote,
 }) => {
   return (
-    <div className="border rounded p-4 bg-white hover:shadow-xl transition-all ease-in-out">
+    <div className="border rounded p-4 bg-white dark:bg-gray-300 hover:shadow-xl transition-all ease-in-out">
       <div className="flex items-center justify-between">
         <div>
-          <h6 className="text-sm font-medium">{title}</h6>
+        <h6 className="text-sm font-medium text-black dark:text-black">{title}</h6>
           <span className="text-xs text-slate-500">{moment(date).format('Do MMM YYYY')}</span>
         </div>
         <MdOutlinePushPin
