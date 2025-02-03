@@ -77,6 +77,9 @@ const Home = () => {
   const deleteNote = async (data) => {
     const noteId = data._id;
 
+    const isConfirmed = window.confirm("Are you sure you want to delete this note?");
+    if (!isConfirmed) return;
+
     try {
       const response = await axiosInstance.delete("/delete-note/" + noteId);
 
@@ -181,7 +184,7 @@ const Home = () => {
       </div>
 
       <button
-        className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 absolute right-10 bottom-10"
+        className="w-16 h-16 fixed flex items-center justify-center rounded-2xl bg-primary hover:bg-blue-600 right-10 bottom-10"
         onClick={() => {
           setOpenModifyNotes({ isShown: true, type: "add", data: null });
         }}
